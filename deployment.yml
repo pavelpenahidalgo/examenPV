@@ -1,0 +1,91 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-dp-ext
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nginx-dp-ext
+  template:
+    metadata:
+      labels:
+        app: nginx-dp-ext
+    spec:
+      containers:
+      - name: nginx-container-ext
+        image: nginx:alpine    
+        ports:
+        - containerPort: 80
+  strategy:
+    type: Recreate
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myapp
+  namespace: PenaHidalgo
+  labels: #opcional
+    app: web-nginx
+    env: dev
+    nombre: Pavel
+    apellidos: Peña
+    edad: 47 
+  annotations: #opcional
+    owner: equipo1
+  generation: 2
+  finalizers: #opcional
+    - ruta.com/updated
+data:
+  key: value
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myapp
+  namespace: PenaHidalgo #opcional
+  labels: #opcional
+    app: web-nginx
+    env: dev
+  annotations: #opcional
+    owner: equipo1
+  #creationTimestamp: "2024-11-18T12:00"  #automatico
+  # ownerReferences:
+  #   - apiVersion: 
+  generation: 2
+  finalizers: #opcional
+    - ruta.com/updated
+data:
+  key: value
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: custom-secret
+type: Opaque
+data:
+  username: pavel
+  password: T1JRVUVTVEFET1JFUw==
+  password_confirmation: T1JRVUVTVEFET1JFUw==
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-host
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete #Retain Delete #Recycle
+  storageClassName: manual
+  hostPath:
+    path: /tmp/data1
+    type: Directory
+
